@@ -27,6 +27,22 @@ Use this project only with a lawful and permitted data source. You are responsib
 
 ## Local run on Mac
 
+Fastest path without installing PostgreSQL:
+
+1. Start the app with the standalone profile:
+   ```bash
+   chmod +x mvnw
+   ./mvnw spring-boot:run -Dspring-boot.run.profiles=standalone
+   ```
+2. Open:
+   - Dashboard: `http://localhost:8080/dashboard`
+   - Actuator: `http://localhost:8080/actuator/health`
+   - H2 console: `http://localhost:8080/h2-console`
+
+This uses an embedded file-backed H2 database in `.data/railwatcher` so the app runs end-to-end on one machine with no external database.
+
+Full local profile with PostgreSQL:
+
 1. Copy `.env.example` to `.env`.
 2. Start PostgreSQL with Docker Compose:
    ```bash
@@ -44,6 +60,19 @@ Use this project only with a lawful and permitted data source. You are responsib
 5. Open:
    - Dashboard: `http://localhost:8080/dashboard`
    - Actuator: `http://localhost:8080/actuator/health`
+
+## Why the app uses a database
+
+The watcher is stateful. It needs durable storage for:
+
+- saved watch jobs
+- latest availability status per watcher
+- status history to detect charting and booking-open transitions
+- alert history and de-duplication state
+- provider error history and backoff behavior
+- scheduler state across restarts
+
+For production, PostgreSQL is the correct default because those records should survive restarts and scale cleanly. For local end-to-end usage, the `standalone` profile uses an embedded H2 database so you do not need to install PostgreSQL first.
 
 ## Linux / VPS run
 

@@ -1,6 +1,9 @@
 # Maven
 /target/
 
+# Embedded database files
+/.data/
+
 # Local environment
 .env
 
