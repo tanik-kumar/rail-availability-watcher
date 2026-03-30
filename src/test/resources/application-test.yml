@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:railwatcher;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;DEFAULT_NULL_ORDERING=HIGH
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  flyway:
+    enabled: false
+  mail:
+    host: localhost
+    port: 2525
+
+railway:
+  admin-user:
+    id: 00000000-0000-0000-0000-000000000001
+    name: Test Admin
+    email: test@example.com
+    telegram-chat-id:
+    webhook-url:
+    timezone: Asia/Kolkata
+  redis:
+    enabled: false

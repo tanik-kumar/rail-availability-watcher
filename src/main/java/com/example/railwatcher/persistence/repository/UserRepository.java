@@ -1,0 +1,11 @@
+package com.example.railwatcher.persistence.repository;
+
+import com.example.railwatcher.persistence.entity.UserEntity;
+import java.util.Optional;
+import java.util.UUID;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<UserEntity, UUID> {
+
+    Optional<UserEntity> findByEmail(String email);
+}

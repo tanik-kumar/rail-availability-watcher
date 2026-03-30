@@ -1,0 +1,10 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  thymeleaf:
+    cache: false
+
+railway:
+  provider:
+    permits-per-minute: 6

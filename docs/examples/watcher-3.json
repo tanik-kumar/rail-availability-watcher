@@ -1,0 +1,16 @@
+{
+  "providerType": "MOCK",
+  "trainNumber": "20171",
+  "journeyDate": "2026-04-03",
+  "sourceStation": "RANI KAMALAPATI",
+  "destinationStation": "NDLS",
+  "boardingStation": "BPL",
+  "quota": "GN",
+  "travelClass": "CC",
+  "originDepartureTime": "2026-04-03T05:55:00",
+  "boardingDepartureTime": "2026-04-03T06:15:00",
+  "notifyTelegram": true,
+  "notifyEmail": false,
+  "notifyWebhook": true,
+  "note": "Watcher 3"
+}

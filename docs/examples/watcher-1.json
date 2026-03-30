@@ -1,0 +1,18 @@
+{
+  "providerType": "MOCK",
+  "trainNumber": "12004",
+  "journeyDate": "2026-04-02",
+  "sourceStation": "NDLS",
+  "destinationStation": "LKO",
+  "boardingStation": "CNB",
+  "quota": "GN",
+  "travelClass": "3A",
+  "originDepartureTime": "2026-04-02T06:10:00",
+  "boardingDepartureTime": "2026-04-02T10:25:00",
+  "quietHoursStart": "00:30:00",
+  "quietHoursEnd": "05:00:00",
+  "notifyTelegram": true,
+  "notifyEmail": false,
+  "notifyWebhook": false,
+  "note": "Watcher 1"
+}

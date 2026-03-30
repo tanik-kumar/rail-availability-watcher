@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+  thymeleaf:
+    cache: true
+
+server:
+  forward-headers-strategy: framework
+
+railway:
+  provider:
+    permits-per-minute: 8

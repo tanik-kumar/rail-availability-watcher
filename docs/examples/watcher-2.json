@@ -1,0 +1,16 @@
+{
+  "providerType": "MOCK",
+  "trainNumber": "12309",
+  "journeyDate": "2026-04-02",
+  "sourceStation": "PNBE",
+  "destinationStation": "NDLS",
+  "boardingStation": "PNBE",
+  "quota": "GN",
+  "travelClass": "2A",
+  "originDepartureTime": "2026-04-02T17:55:00",
+  "boardingDepartureTime": "2026-04-02T17:55:00",
+  "notifyTelegram": true,
+  "notifyEmail": true,
+  "notifyWebhook": false,
+  "note": "Watcher 2"
+}

@@ -1,0 +1,116 @@
+spring:
+  application:
+    name: rail-availability-watcher
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/railwatcher}
+    username: ${DB_USERNAME:railwatcher}
+    password: ${DB_PASSWORD:railwatcher}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+  thymeleaf:
+    cache: false
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:false}
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS:false}
+
+server:
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    root: INFO
+    com.example.railwatcher: INFO
+  structured:
+    format:
+      console: ecs
+
+railway:
+  scheduler:
+    dispatch-interval: 15s
+    batch-size: 20
+  polling:
+    far-interval: 20m
+    elevated-interval: 5m
+    burst-interval: 45s
+    quiet-hours-interval: 1h
+    max-error-backoff: 30m
+    initial-error-backoff: 1m
+    departure-grace: 15m
+    retry-attempts: 3
+    retry-delay: 2s
+    alert-cooldown: 20m
+  charting:
+    origin-lead-time: 4h
+    remote-lead-time: 90m
+    elevated-window: 2h
+    burst-window: 30m
+  provider:
+    connect-timeout: 5s
+    read-timeout: 10s
+    permits-per-minute: 10
+    circuit-failure-threshold: 5
+    circuit-open-duration: 15m
+    http-base-url: ${PROVIDER_BASE_URL:}
+    http-endpoint-path: ${PROVIDER_ENDPOINT_PATH:/api/availability}
+    user-agent: RailAvailabilityWatcher/0.0.1
+  notification:
+    email-from: ${ALERT_EMAIL_FROM:no-reply@railwatcher.local}
+    telegram-bot-token: ${TELEGRAM_BOT_TOKEN:}
+    telegram-api-base-url: ${TELEGRAM_API_BASE_URL:https://api.telegram.org}
+    strong-alert-repeat-cooldown: 5m
+  redis:
+    enabled: ${REDIS_ENABLED:false}
+    key-prefix: rail-watcher
+    ttl: 6h
+  aliases:
+    stations:
+      ndls: NDLS
+      nzm: NZM
+      cnb: CNB
+      bct: BCT
+      mmct: MMCT
+      csmt: CSMT
+      pnbe: PNBE
+      asr: ASR
+      lko: LKO
+      bpl: BPL
+    trains:
+      shatabdi-lko-ndls: "12004"
+      rajdhani-pnbe-ndls: "12309"
+      vande-bharat-bpl-ndls: "20171"
+  admin-user:
+    id: 00000000-0000-0000-0000-000000000001
+    name: Personal Admin
+    email: ${ADMIN_EMAIL:you@example.com}
+    telegram-chat-id: ${TELEGRAM_CHAT_ID:}
+    webhook-url: ${ADMIN_WEBHOOK_URL:}
+    timezone: ${ADMIN_TIMEZONE:Asia/Kolkata}

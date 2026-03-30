@@ -1,0 +1,31 @@
+package com.example.railwatcher.common.model;
+
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.UUID;
+
+public record WatchRequest(
+        UUID userId,
+        @NotNull ProviderType providerType,
+        @NotBlank String trainNumber,
+        @NotNull LocalDate journeyDate,
+        @NotBlank String sourceStation,
+        @NotBlank String destinationStation,
+        @NotBlank String boardingStation,
+        @NotBlank String quota,
+        @NotBlank String travelClass,
+        @NotNull @FutureOrPresent LocalDateTime originDepartureTime,
+        @Future LocalDateTime boardingDepartureTime,
+        LocalTime quietHoursStart,
+        LocalTime quietHoursEnd,
+        boolean notifyTelegram,
+        boolean notifyEmail,
+        boolean notifyWebhook,
+        String note
+) {
+}

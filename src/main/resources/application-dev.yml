@@ -1,0 +1,8 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+railway:
+  scheduler:
+    batch-size: 10

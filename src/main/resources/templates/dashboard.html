@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Railways Availability Watcher</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="page-shell">
+    <header class="hero">
+        <div>
+            <p class="eyebrow">Current Availability Watcher</p>
+            <h1>Monitor compliant current booking signals without automating booking.</h1>
+            <p class="hero-copy">
+                The dashboard tracks charting windows, status transitions, and alert activity for multiple train and station-pair watchers.
+            </p>
+        </div>
+        <div class="hero-actions">
+            <button type="button" id="theme-toggle" class="ghost-button">Toggle Theme</button>
+            <a class="ghost-button" href="/actuator/health">Actuator Health</a>
+        </div>
+    </header>
+
+    <section class="notice">
+        <strong>Compliance boundary:</strong>
+        This app monitors availability only. It does not log in to IRCTC, submit payments, solve CAPTCHA, or automate ticket purchase.
+    </section>
+
+    <section class="stats-grid">
+        <article class="stat-card">
+            <span class="stat-label">Watchers</span>
+            <strong th:text="${#lists.size(watchers)}">0</strong>
+        </article>
+        <article class="stat-card">
+            <span class="stat-label">Admin User</span>
+            <strong th:text="${adminUser.email()}">you@example.com</strong>
+        </article>
+        <article class="stat-card">
+            <span class="stat-label">Station Aliases</span>
+            <strong th:text="${#maps.size(stations)}">0</strong>
+        </article>
+    </section>
+
+    <p th:if="${flashMessage}" class="flash" th:text="${flashMessage}"></p>
+
+    <section class="content-grid">
+        <div class="panel form-panel">
+            <div class="panel-header">
+                <h2 th:text="${editId != null} ? 'Edit Watcher' : 'Add Watcher'">Add Watcher</h2>
+                <span th:if="${editId != null}" class="badge neutral">Editing</span>
+            </div>
+            <form th:action="${editId != null} ? @{'/ui/watchers/' + ${editId}} : @{/ui/watchers}" method="post" th:object="${watcherForm}">
+                <div class="form-grid">
+                    <label>
+                        Provider
+                        <select th:field="*{providerType}">
+                            <option value="MOCK">MOCK</option>
+                            <option value="HTTP_PLACEHOLDER">HTTP_PLACEHOLDER</option>
+                        </select>
+                    </label>
+                    <label>
+                        Train Number
+                        <input type="text" th:field="*{trainNumber}" placeholder="12004">
+                    </label>
+                    <label>
+                        Journey Date
+                        <input type="date" th:field="*{journeyDate}">
+                    </label>
+                    <label>
+                        Source
+                        <input type="text" th:field="*{sourceStation}" placeholder="NDLS">
+                    </label>
+                    <label>
+                        Destination
+                        <input type="text" th:field="*{destinationStation}" placeholder="LKO">
+                    </label>
+                    <label>
+                        Boarding
+                        <input type="text" th:field="*{boardingStation}" placeholder="CNB">
+                    </label>
+                    <label>
+                        Quota
+                        <input type="text" th:field="*{quota}" placeholder="GN">
+                    </label>
+                    <label>
+                        Class
+                        <input type="text" th:field="*{travelClass}" placeholder="3A">
+                    </label>
+                    <label>
+                        Origin Departure
+                        <input type="datetime-local" th:field="*{originDepartureTime}">
+                    </label>
+                    <label>
+                        Boarding Departure
+                        <input type="datetime-local" th:field="*{boardingDepartureTime}">
+                    </label>
+                    <label>
+                        Quiet Hours Start
+                        <input type="time" th:field="*{quietHoursStart}">
+                    </label>
+                    <label>
+                        Quiet Hours End
+                        <input type="time" th:field="*{quietHoursEnd}">
+                    </label>
+                </div>
+                <label>
+                    Notes
+                    <textarea th:field="*{note}" rows="3" placeholder="Example: prioritize remote-location chart at CNB"></textarea>
+                </label>
+                <div class="inline-checkboxes">
+                    <label><input type="checkbox" th:field="*{notifyTelegram}"> Telegram</label>
+                    <label><input type="checkbox" th:field="*{notifyEmail}"> Email</label>
+                    <label><input type="checkbox" th:field="*{notifyWebhook}"> Webhook</label>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="primary-button" th:text="${editId != null} ? 'Update Watcher' : 'Create Watcher'">Create Watcher</button>
+                    <a th:if="${editId != null}" class="ghost-button" href="/dashboard">Cancel</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <h2>Watchers</h2>
+                <span class="badge neutral" th:text="${#lists.size(watchers) + ' active records'}">0 active records</span>
+            </div>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Train</th>
+                        <th>Route</th>
+                        <th>Status</th>
+                        <th>Checks</th>
+                        <th>Alerts</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(watchers)}">
+                        <td colspan="6" class="empty-state">No watchers yet. Create one from the form.</td>
+                    </tr>
+                    <tr th:each="watcher : ${watchers}">
+                        <td>
+                            <strong th:text="${watcher.trainNumber()}">12004</strong>
+                            <p th:text="${watcher.travelClass() + ' / ' + watcher.quota()}">3A / GN</p>
+                        </td>
+                        <td>
+                            <strong th:text="${watcher.sourceStation() + ' → ' + watcher.destinationStation()}">NDLS → LKO</strong>
+                            <p th:text="${'Boarding: ' + watcher.boardingStation()}">Boarding: CNB</p>
+                        </td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${watcher.currentStatus().name() == 'AVAILABLE' || watcher.currentStatus().name() == 'BOOKABLE'} ? 'success' :
+                                                  (${watcher.currentStatus().name() == 'WAITLIST'} ? 'warn' : 'neutral')"
+                                  th:text="${watcher.currentStatus().name()}">UNKNOWN</span>
+                            <p th:text="${watcher.status().name() + ' / bookingOpen=' + watcher.bookingOpen()}">ACTIVE / bookingOpen=false</p>
+                        </td>
+                        <td>
+                            <p th:text="${'Last: ' + (watcher.lastCheckedAt() != null ? watcher.lastCheckedAt() : 'never')}">Last: never</p>
+                            <p th:text="${'Next: ' + watcher.nextPollAt()}">Next: soon</p>
+                        </td>
+                        <td>
+                            <p th:text="${'Last alert: ' + (watcher.lastAlertAt() != null ? watcher.lastAlertAt() : 'none')}">Last alert: none</p>
+                            <p th:text="${'Failures: ' + watcher.consecutiveFailures()}">Failures: 0</p>
+                        </td>
+                        <td class="actions-cell">
+                            <a class="ghost-button" th:href="@{'/watchers/' + ${watcher.id()} + '/edit'}">Edit</a>
+                            <form th:if="${watcher.status().name() == 'ACTIVE'}" th:action="@{'/ui/watchers/' + ${watcher.id()} + '/pause'}" method="post">
+                                <button type="submit" class="ghost-button">Pause</button>
+                            </form>
+                            <form th:if="${watcher.status().name() != 'ACTIVE'}" th:action="@{'/ui/watchers/' + ${watcher.id()} + '/resume'}" method="post">
+                                <button type="submit" class="ghost-button">Resume</button>
+                            </form>
+                            <form th:action="@{'/ui/watchers/' + ${watcher.id()} + '/check-now'}" method="post">
+                                <button type="submit" class="primary-button subtle">Check Now</button>
+                            </form>
+                            <form th:action="@{'/ui/watchers/' + ${watcher.id()} + '/delete'}" method="post">
+                                <button type="submit" class="danger-button">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+<script th:src="@{/js/dashboard.js}"></script>
+</body>
+</html>
