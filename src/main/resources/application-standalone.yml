@@ -3,7 +3,7 @@ spring:
     activate:
       on-profile: standalone
   datasource:
-    url: jdbc:h2:file:./.data/railwatcher;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:file:./.data/railwatcher;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER=TRUE
     username: sa
     password:
     driver-class-name: org.h2.Driver
@@ -19,6 +19,13 @@ spring:
   mail:
     host: localhost
     port: 2525
+
+management:
+  health:
+    redis:
+      enabled: false
+    mail:
+      enabled: false
 
 railway:
   redis:
